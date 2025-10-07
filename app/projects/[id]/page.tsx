@@ -1,10 +1,25 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { UserNav } from "@/components/user-nav"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Zap,
   Users,
@@ -19,24 +34,26 @@ import {
   ArrowLeft,
   Edit,
   Plus,
+  Filter,
+  ListTodo,
 } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
 
-// Mock data - in real app, this would come from params
 const projectData = {
   id: 1,
-  name: "Dragon Quest RPG",
+  name: "RPG Nhiệm Vụ Rồng",
   description:
-    "An epic fantasy RPG with turn-based combat, character progression, and an immersive storyline. Players embark on a quest to save the kingdom from ancient evil.",
+    "Một RPG giả tưởng sử thi với chiến đấu theo lượt, phát triển nhân vật và cốt truyện hấp dẫn. Người chơi bắt đầu nhiệm vụ cứu vương quốc khỏi thế lực tà ác cổ đại.",
   leader: {
-    name: "Nguyen Van A",
+    name: "Nguyễn Văn A",
     avatar: "/placeholder.svg?height=100&width=100",
-    role: "Project Lead",
+    role: "Trưởng Dự Án",
   },
-  semester: "Spring 2025",
-  status: "active",
-  startDate: "2025-01-05",
-  expectedEndDate: "2025-05-15",
+  semester: "Xuân 2025",
+  status: "Đang hoạt động",
+  startDate: "05/01/2025",
+  expectedEndDate: "15/05/2025",
   progress: 75,
   creditsAllocated: 3000,
   creditsDistributed: 2250,
@@ -44,127 +61,155 @@ const projectData = {
   team: [
     {
       id: 1,
-      name: "Nguyen Van A",
+      name: "Nguyễn Văn A",
       avatar: "/placeholder.svg?height=100&width=100",
-      role: "Lead Developer",
+      role: "Lập trình viên chính",
       credits: 850,
       contributions: 45,
     },
     {
       id: 2,
-      name: "Tran Thi B",
+      name: "Trần Thị B",
       avatar: "/placeholder.svg?height=100&width=100",
-      role: "UI/UX Designer",
+      role: "Thiết kế UI/UX",
       credits: 420,
       contributions: 28,
     },
     {
       id: 3,
-      name: "Le Van C",
+      name: "Lê Văn C",
       avatar: "/placeholder.svg?height=100&width=100",
-      role: "Backend Developer",
+      role: "Lập trình viên Backend",
       credits: 520,
       contributions: 32,
     },
     {
       id: 4,
-      name: "Pham Thi D",
+      name: "Phạm Thị D",
       avatar: "/placeholder.svg?height=100&width=100",
-      role: "Game Designer",
+      role: "Thiết kế Game",
       credits: 380,
       contributions: 25,
     },
     {
       id: 5,
-      name: "Hoang Van E",
+      name: "Hoàng Văn E",
       avatar: "/placeholder.svg?height=100&width=100",
-      role: "Sound Designer",
+      role: "Thiết kế Âm thanh",
       credits: 80,
       contributions: 8,
     },
   ],
 }
 
-const milestones = [
+const initialMilestones = [
   {
     id: 1,
-    name: "Project Setup & Planning",
-    description: "Initialize project structure, define requirements, and create development roadmap",
+    name: "Thiết lập & Lên kế hoạch Dự án",
+    description: "Khởi tạo cấu trúc dự án, định nghĩa yêu cầu và tạo lộ trình phát triển",
     status: "completed",
     credits: 200,
-    dueDate: "2025-01-15",
-    completedDate: "2025-01-14",
-    assignees: ["Nguyen Van A", "Pham Thi D"],
+    dueDate: "15/01/2025",
+    completedDate: "14/01/2025",
+    assignees: ["Nguyễn Văn A", "Phạm Thị D"],
   },
   {
     id: 2,
-    name: "Core Game Mechanics",
-    description: "Implement basic movement, combat system, and character controls",
+    name: "Cơ chế Game Cốt lõi",
+    description: "Triển khai di chuyển cơ bản, hệ thống chiến đấu và điều khiển nhân vật",
     status: "completed",
     credits: 400,
-    dueDate: "2025-02-01",
-    completedDate: "2025-01-30",
-    assignees: ["Nguyen Van A", "Le Van C"],
+    dueDate: "01/02/2025",
+    completedDate: "30/01/2025",
+    assignees: ["Nguyễn Văn A", "Lê Văn C"],
   },
   {
     id: 3,
-    name: "UI/UX Design",
-    description: "Design and implement game menus, HUD, inventory system, and character screens",
+    name: "Thiết kế UI/UX",
+    description: "Thiết kế và triển khai menu game, HUD, hệ thống kho đồ và màn hình nhân vật",
     status: "completed",
     credits: 350,
-    dueDate: "2025-02-15",
-    completedDate: "2025-02-14",
-    assignees: ["Tran Thi B"],
+    dueDate: "15/02/2025",
+    completedDate: "14/02/2025",
+    assignees: ["Trần Thị B"],
   },
   {
     id: 4,
-    name: "Character Progression System",
-    description: "Implement leveling, skill trees, equipment system, and character stats",
-    status: "completed",
+    name: "Hệ thống Phát triển Nhân vật",
+    description: "Triển khai nâng cấp, cây kỹ năng, hệ thống trang bị và chỉ số nhân vật",
+    status: "in-progress",
     credits: 450,
-    dueDate: "2025-03-01",
-    completedDate: "2025-02-28",
-    assignees: ["Nguyen Van A", "Le Van C"],
+    dueDate: "01/03/2025",
+    completedDate: null,
+    assignees: ["Nguyễn Văn A", "Lê Văn C"],
   },
   {
     id: 5,
-    name: "Story & Quest System",
-    description: "Create main storyline, side quests, dialogue system, and NPC interactions",
-    status: "completed",
-    credits: 400,
-    dueDate: "2025-03-15",
-    completedDate: "2025-03-13",
-    assignees: ["Pham Thi D", "Nguyen Van A"],
-  },
-  {
-    id: 6,
-    name: "Boss Battle System",
-    description: "Design and implement challenging boss encounters with unique mechanics",
-    status: "completed",
-    credits: 450,
-    dueDate: "2025-04-01",
-    completedDate: "2025-03-30",
-    assignees: ["Nguyen Van A", "Pham Thi D"],
-  },
-  {
-    id: 7,
-    name: "Audio & Sound Effects",
-    description: "Add background music, sound effects, and voice acting for key characters",
-    status: "in-progress",
-    credits: 300,
-    dueDate: "2025-04-15",
-    completedDate: null,
-    assignees: ["Hoang Van E"],
-  },
-  {
-    id: 8,
-    name: "Polish & Release",
-    description: "Bug fixes, performance optimization, final testing, and store submission",
+    name: "Cốt truyện & Hệ thống Nhiệm vụ",
+    description: "Tạo cốt truyện chính, nhiệm vụ phụ, hệ thống đối thoại và tương tác NPC",
     status: "pending",
-    credits: 450,
-    dueDate: "2025-05-15",
+    credits: 400,
+    dueDate: "15/03/2025",
     completedDate: null,
-    assignees: ["All Team"],
+    assignees: ["Phạm Thị D", "Nguyễn Văn A"],
+  },
+]
+
+const initialTasks = [
+  {
+    id: 1,
+    milestoneId: 4,
+    name: "Triển khai hệ thống cây kỹ năng",
+    description: "Tạo giao diện và logic cho cây kỹ năng của nhân vật",
+    assignedTo: "Nguyễn Văn A",
+    status: "in-progress",
+    dueDate: "25/02/2025",
+    completedDate: null,
+    credits: 150,
+  },
+  {
+    id: 2,
+    milestoneId: 4,
+    name: "Thiết kế hệ thống trang bị",
+    description: "Tạo UI cho việc trang bị vũ khí và áo giáp",
+    assignedTo: "Trần Thị B",
+    status: "completed",
+    dueDate: "20/02/2025",
+    completedDate: "19/02/2025",
+    credits: 100,
+  },
+  {
+    id: 3,
+    milestoneId: 4,
+    name: "Lập trình logic trang bị",
+    description: "Triển khai backend cho hệ thống trang bị",
+    assignedTo: "Lê Văn C",
+    status: "completed",
+    dueDate: "22/02/2025",
+    completedDate: "21/02/2025",
+    credits: 120,
+  },
+  {
+    id: 4,
+    milestoneId: 4,
+    name: "Cân bằng chỉ số nhân vật",
+    description: "Điều chỉnh các chỉ số để đảm bảo gameplay cân bằng",
+    assignedTo: "Phạm Thị D",
+    status: "pending",
+    dueDate: "28/02/2025",
+    completedDate: null,
+    credits: 80,
+  },
+  {
+    id: 5,
+    milestoneId: 5,
+    name: "Viết cốt truyện chính",
+    description: "Hoàn thiện kịch bản cho cốt truyện chính của game",
+    assignedTo: "Phạm Thị D",
+    status: "pending",
+    dueDate: "10/03/2025",
+    completedDate: null,
+    credits: 200,
   },
 ]
 
@@ -172,44 +217,82 @@ const activityLog = [
   {
     id: 1,
     type: "milestone",
-    message: "Milestone 6 'Boss Battle System' completed",
-    user: "Nguyen Van A",
-    date: "2025-03-30",
-    credits: 450,
+    message: "Cột mốc 'Thiết kế UI/UX' đã hoàn thành",
+    user: "Trần Thị B",
+    date: "14/02/2025",
+    credits: 350,
   },
   {
     id: 2,
-    type: "credit",
-    message: "Distributed 150 credits to Nguyen Van A",
-    user: "Project Manager",
-    date: "2025-03-30",
-    credits: 150,
+    type: "task",
+    message: "Nhiệm vụ 'Thiết kế hệ thống trang bị' đã hoàn thành",
+    user: "Trần Thị B",
+    date: "19/02/2025",
+    credits: 100,
   },
   {
     id: 3,
-    type: "milestone",
-    message: "Started working on Milestone 7 'Audio & Sound Effects'",
-    user: "Hoang Van E",
-    date: "2025-03-28",
-    credits: null,
+    type: "credit",
+    message: "Phân phối 150 tín chỉ cho Nguyễn Văn A",
+    user: "Quản lý Dự án",
+    date: "18/02/2025",
+    credits: 150,
   },
   {
     id: 4,
     type: "team",
-    message: "Hoang Van E joined the project",
-    user: "Project Manager",
-    date: "2025-03-25",
+    message: "Hoàng Văn E đã tham gia dự án",
+    user: "Quản lý Dự án",
+    date: "15/02/2025",
     credits: null,
   },
 ]
 
 export default function ProjectDetailsPage() {
+  const [milestones, setMilestones] = useState(initialMilestones)
+  const [tasks, setTasks] = useState(initialTasks)
+  const [editProjectOpen, setEditProjectOpen] = useState(false)
+  const [addMilestoneOpen, setAddMilestoneOpen] = useState(false)
+  const [editMilestoneOpen, setEditMilestoneOpen] = useState(false)
+  const [addTaskOpen, setAddTaskOpen] = useState(false)
+  const [editTaskOpen, setEditTaskOpen] = useState(false)
+  const [selectedMilestone, setSelectedMilestone] = useState<any>(null)
+  const [selectedTask, setSelectedTask] = useState<any>(null)
+  const [taskFilter, setTaskFilter] = useState("all")
+
   const completedMilestones = milestones.filter((m) => m.status === "completed").length
   const totalMilestones = milestones.length
 
+  const filteredTasks = tasks.filter((task) => {
+    if (taskFilter === "all") return true
+    if (taskFilter === "completed") return task.status === "completed"
+    if (taskFilter === "in-progress") return task.status === "in-progress"
+    if (taskFilter === "pending") return task.status === "pending"
+    return true
+  })
+
+  const handleMarkTaskComplete = (taskId: number) => {
+    setTasks(
+      tasks.map((task) =>
+        task.id === taskId
+          ? { ...task, status: "completed", completedDate: new Date().toLocaleDateString("vi-VN") }
+          : task,
+      ),
+    )
+  }
+
+  const handleMarkMilestoneComplete = (milestoneId: number) => {
+    setMilestones(
+      milestones.map((milestone) =>
+        milestone.id === milestoneId
+          ? { ...milestone, status: "completed", completedDate: new Date().toLocaleDateString("vi-VN") }
+          : milestone,
+      ),
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950">
-      {/* Header */}
       <header className="border-b border-purple-800/30 bg-slate-950/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-3">
@@ -217,23 +300,143 @@ export default function ProjectDetailsPage() {
               <ArrowLeft className="w-5 h-5" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold text-white">Project Details</h1>
+              <h1 className="text-xl font-bold text-white">Chi Tiết Dự Án</h1>
               <p className="text-xs text-purple-300">{projectData.name}</p>
             </div>
           </Link>
           <nav className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              className="border-purple-500 text-purple-300 hover:bg-purple-900/30 bg-transparent"
-            >
-              <Edit className="w-4 h-4 mr-2" />
-              Edit Project
-            </Button>
-            <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Milestone
-            </Button>
-            <UserNav />
+            <Dialog open={editProjectOpen} onOpenChange={setEditProjectOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="border-purple-500 text-purple-300 hover:bg-purple-900/30 bg-transparent"
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Chỉnh sửa Dự án
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-slate-900 border-purple-800/30 text-white">
+                <DialogHeader>
+                  <DialogTitle>Chỉnh sửa Dự án</DialogTitle>
+                  <DialogDescription className="text-purple-300">Cập nhật thông tin dự án</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="project-name">Tên dự án</Label>
+                    <Input
+                      id="project-name"
+                      defaultValue={projectData.name}
+                      className="bg-slate-800 border-purple-800/30"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="project-desc">Mô tả</Label>
+                    <Textarea
+                      id="project-desc"
+                      defaultValue={projectData.description}
+                      className="bg-slate-800 border-purple-800/30"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="start-date">Ngày bắt đầu</Label>
+                      <Input
+                        id="start-date"
+                        type="date"
+                        defaultValue="2025-01-05"
+                        className="bg-slate-800 border-purple-800/30"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="end-date">Ngày kết thúc dự kiến</Label>
+                      <Input
+                        id="end-date"
+                        type="date"
+                        defaultValue="2025-05-15"
+                        className="bg-slate-800 border-purple-800/30"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="credits">Tín chỉ phân bổ</Label>
+                    <Input
+                      id="credits"
+                      type="number"
+                      defaultValue={projectData.creditsAllocated}
+                      className="bg-slate-800 border-purple-800/30"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setEditProjectOpen(false)}
+                    className="border-purple-500 text-purple-300"
+                  >
+                    Hủy
+                  </Button>
+                  <Button className="bg-gradient-to-r from-purple-600 to-pink-600">Lưu thay đổi</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog open={addMilestoneOpen} onOpenChange={setAddMilestoneOpen}>
+              <DialogTrigger asChild>
+                <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Thêm Cột mốc
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-slate-900 border-purple-800/30 text-white">
+                <DialogHeader>
+                  <DialogTitle>Thêm Cột mốc Mới</DialogTitle>
+                  <DialogDescription className="text-purple-300">Tạo cột mốc mới cho dự án</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="milestone-name">Tên cột mốc</Label>
+                    <Input
+                      id="milestone-name"
+                      placeholder="Nhập tên cột mốc"
+                      className="bg-slate-800 border-purple-800/30"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="milestone-desc">Mô tả</Label>
+                    <Textarea
+                      id="milestone-desc"
+                      placeholder="Mô tả chi tiết cột mốc"
+                      className="bg-slate-800 border-purple-800/30"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="milestone-credits">Tín chỉ</Label>
+                      <Input
+                        id="milestone-credits"
+                        type="number"
+                        placeholder="0"
+                        className="bg-slate-800 border-purple-800/30"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="milestone-due">Hạn chót</Label>
+                      <Input id="milestone-due" type="date" className="bg-slate-800 border-purple-800/30" />
+                    </div>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setAddMilestoneOpen(false)}
+                    className="border-purple-500 text-purple-300"
+                  >
+                    Hủy
+                  </Button>
+                  <Button className="bg-gradient-to-r from-purple-600 to-pink-600">Tạo Cột mốc</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </nav>
         </div>
       </header>
@@ -260,28 +463,28 @@ export default function ProjectDetailsPage() {
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                   <div className="p-3 bg-slate-800/50 rounded-lg border border-purple-800/30">
-                    <p className="text-purple-400 text-sm mb-1">Progress</p>
+                    <p className="text-purple-400 text-sm mb-1">Tiến độ</p>
                     <p className="text-white text-2xl font-bold">{projectData.progress}%</p>
                   </div>
                   <div className="p-3 bg-slate-800/50 rounded-lg border border-purple-800/30">
-                    <p className="text-purple-400 text-sm mb-1">Team Size</p>
+                    <p className="text-purple-400 text-sm mb-1">Quy mô Nhóm</p>
                     <p className="text-white text-2xl font-bold">{projectData.team.length}</p>
                   </div>
                   <div className="p-3 bg-slate-800/50 rounded-lg border border-purple-800/30">
-                    <p className="text-purple-400 text-sm mb-1">Milestones</p>
+                    <p className="text-purple-400 text-sm mb-1">Cột mốc</p>
                     <p className="text-white text-2xl font-bold">
                       {completedMilestones}/{totalMilestones}
                     </p>
                   </div>
                   <div className="p-3 bg-slate-800/50 rounded-lg border border-purple-800/30">
-                    <p className="text-purple-400 text-sm mb-1">Credits Used</p>
+                    <p className="text-purple-400 text-sm mb-1">Tín chỉ Đã dùng</p>
                     <p className="text-white text-2xl font-bold">{projectData.creditsDistributed}</p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-purple-300">Project Timeline</span>
+                    <span className="text-purple-300">Tiến trình Dự án</span>
                     <span className="text-white">
                       {projectData.startDate} → {projectData.expectedEndDate}
                     </span>
@@ -293,28 +496,28 @@ export default function ProjectDetailsPage() {
               <div className="md:w-80">
                 <Card className="bg-slate-800/50 border-purple-800/30">
                   <CardHeader>
-                    <CardTitle className="text-white text-lg">Credits Overview</CardTitle>
+                    <CardTitle className="text-white text-lg">Tổng quan Tín chỉ</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-purple-300">Allocated</span>
+                      <span className="text-purple-300">Đã phân bổ</span>
                       <span className="text-white font-bold flex items-center gap-1">
                         <Zap className="w-4 h-4 text-yellow-400" />
                         {projectData.creditsAllocated}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-purple-300">Distributed</span>
+                      <span className="text-purple-300">Đã phân phối</span>
                       <span className="text-green-400 font-bold">{projectData.creditsDistributed}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-purple-300">Remaining</span>
+                      <span className="text-purple-300">Còn lại</span>
                       <span className="text-blue-400 font-bold">{projectData.creditsRemaining}</span>
                     </div>
                     <div className="pt-4 border-t border-purple-800/30">
                       <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
                         <DollarSign className="w-4 h-4 mr-2" />
-                        Distribute Credits
+                        Phân phối Tín chỉ
                       </Button>
                     </div>
                   </CardContent>
@@ -322,7 +525,7 @@ export default function ProjectDetailsPage() {
 
                 <Card className="bg-slate-800/50 border-purple-800/30 mt-4">
                   <CardHeader>
-                    <CardTitle className="text-white text-lg">Project Leader</CardTitle>
+                    <CardTitle className="text-white text-lg">Trưởng Dự án</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center gap-3">
@@ -342,7 +545,6 @@ export default function ProjectDetailsPage() {
           </CardContent>
         </Card>
 
-        {/* Tabs */}
         <Tabs defaultValue="milestones" className="space-y-6">
           <TabsList className="bg-slate-900/50 border border-purple-800/30">
             <TabsTrigger
@@ -350,22 +552,25 @@ export default function ProjectDetailsPage() {
               className="data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
             >
               <Target className="w-4 h-4 mr-2" />
-              Milestones
+              Cột mốc
+            </TabsTrigger>
+            <TabsTrigger value="tasks" className="data-[state=active]:bg-purple-900/50 data-[state=active]:text-white">
+              <ListTodo className="w-4 h-4 mr-2" />
+              Nhiệm vụ
             </TabsTrigger>
             <TabsTrigger value="team" className="data-[state=active]:bg-purple-900/50 data-[state=active]:text-white">
               <Users className="w-4 h-4 mr-2" />
-              Team
+              Nhóm
             </TabsTrigger>
             <TabsTrigger
               value="activity"
               className="data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
             >
               <TrendingUp className="w-4 h-4 mr-2" />
-              Activity
+              Hoạt động
             </TabsTrigger>
           </TabsList>
 
-          {/* Milestones Tab */}
           <TabsContent value="milestones" className="space-y-4">
             {milestones.map((milestone, index) => (
               <Card
@@ -422,23 +627,27 @@ export default function ProjectDetailsPage() {
                                 : "bg-slate-800 text-slate-400 border-slate-600/30"
                           }
                         >
-                          {milestone.status}
+                          {milestone.status === "completed"
+                            ? "Hoàn thành"
+                            : milestone.status === "in-progress"
+                              ? "Đang thực hiện"
+                              : "Chờ xử lý"}
                         </Badge>
                       </div>
 
                       <div className="flex flex-wrap items-center gap-4 text-sm">
                         <div className="flex items-center gap-1 text-yellow-400">
                           <Zap className="w-4 h-4" />
-                          <span className="font-semibold">{milestone.credits} credits</span>
+                          <span className="font-semibold">{milestone.credits} tín chỉ</span>
                         </div>
                         <div className="flex items-center gap-1 text-purple-400">
                           <Calendar className="w-4 h-4" />
-                          <span>Due: {milestone.dueDate}</span>
+                          <span>Hạn: {milestone.dueDate}</span>
                         </div>
                         {milestone.completedDate && (
                           <div className="flex items-center gap-1 text-green-400">
                             <CheckCircle2 className="w-4 h-4" />
-                            <span>Completed: {milestone.completedDate}</span>
+                            <span>Hoàn thành: {milestone.completedDate}</span>
                           </div>
                         )}
                         <div className="flex items-center gap-1 text-purple-400">
@@ -449,16 +658,85 @@ export default function ProjectDetailsPage() {
 
                       {milestone.status === "in-progress" && (
                         <div className="mt-4 flex gap-2">
-                          <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
-                            Mark Complete
-                          </Button>
                           <Button
                             size="sm"
-                            variant="outline"
-                            className="border-purple-500 text-purple-300 hover:bg-purple-900/30 bg-transparent"
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                            onClick={() => handleMarkMilestoneComplete(milestone.id)}
                           >
-                            Edit
+                            Đánh dấu Hoàn thành
                           </Button>
+                          <Dialog
+                            open={editMilestoneOpen && selectedMilestone?.id === milestone.id}
+                            onOpenChange={(open) => {
+                              setEditMilestoneOpen(open)
+                              if (open) setSelectedMilestone(milestone)
+                            }}
+                          >
+                            <DialogTrigger asChild>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="border-purple-500 text-purple-300 hover:bg-purple-900/30 bg-transparent"
+                              >
+                                Chỉnh sửa
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="bg-slate-900 border-purple-800/30 text-white">
+                              <DialogHeader>
+                                <DialogTitle>Chỉnh sửa Cột mốc</DialogTitle>
+                                <DialogDescription className="text-purple-300">
+                                  Cập nhật thông tin cột mốc
+                                </DialogDescription>
+                              </DialogHeader>
+                              <div className="space-y-4">
+                                <div>
+                                  <Label htmlFor="edit-milestone-name">Tên cột mốc</Label>
+                                  <Input
+                                    id="edit-milestone-name"
+                                    defaultValue={milestone.name}
+                                    className="bg-slate-800 border-purple-800/30"
+                                  />
+                                </div>
+                                <div>
+                                  <Label htmlFor="edit-milestone-desc">Mô tả</Label>
+                                  <Textarea
+                                    id="edit-milestone-desc"
+                                    defaultValue={milestone.description}
+                                    className="bg-slate-800 border-purple-800/30"
+                                  />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div>
+                                    <Label htmlFor="edit-milestone-credits">Tín chỉ</Label>
+                                    <Input
+                                      id="edit-milestone-credits"
+                                      type="number"
+                                      defaultValue={milestone.credits}
+                                      className="bg-slate-800 border-purple-800/30"
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label htmlFor="edit-milestone-due">Hạn chót</Label>
+                                    <Input
+                                      id="edit-milestone-due"
+                                      type="date"
+                                      className="bg-slate-800 border-purple-800/30"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                              <DialogFooter>
+                                <Button
+                                  variant="outline"
+                                  onClick={() => setEditMilestoneOpen(false)}
+                                  className="border-purple-500 text-purple-300"
+                                >
+                                  Hủy
+                                </Button>
+                                <Button className="bg-gradient-to-r from-purple-600 to-pink-600">Lưu thay đổi</Button>
+                              </DialogFooter>
+                            </DialogContent>
+                          </Dialog>
                         </div>
                       )}
                     </div>
@@ -468,14 +746,296 @@ export default function ProjectDetailsPage() {
             ))}
           </TabsContent>
 
+          <TabsContent value="tasks">
+            <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-white">Nhiệm vụ Dự án</CardTitle>
+                    <CardDescription className="text-purple-300">Quản lý nhiệm vụ của từng thành viên</CardDescription>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Select value={taskFilter} onValueChange={setTaskFilter}>
+                      <SelectTrigger className="w-[180px] bg-slate-800 border-purple-800/30 text-white">
+                        <Filter className="w-4 h-4 mr-2" />
+                        <SelectValue placeholder="Lọc nhiệm vụ" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-slate-800 border-purple-800/30 text-white">
+                        <SelectItem value="all">Tất cả</SelectItem>
+                        <SelectItem value="pending">Chờ xử lý</SelectItem>
+                        <SelectItem value="in-progress">Đang thực hiện</SelectItem>
+                        <SelectItem value="completed">Hoàn thành</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Dialog open={addTaskOpen} onOpenChange={setAddTaskOpen}>
+                      <DialogTrigger asChild>
+                        <Button className="bg-gradient-to-r from-purple-600 to-pink-600">
+                          <Plus className="w-4 h-4 mr-2" />
+                          Thêm Nhiệm vụ
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="bg-slate-900 border-purple-800/30 text-white">
+                        <DialogHeader>
+                          <DialogTitle>Thêm Nhiệm vụ Mới</DialogTitle>
+                          <DialogDescription className="text-purple-300">
+                            Tạo nhiệm vụ mới cho thành viên
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4">
+                          <div>
+                            <Label htmlFor="task-name">Tên nhiệm vụ</Label>
+                            <Input
+                              id="task-name"
+                              placeholder="Nhập tên nhiệm vụ"
+                              className="bg-slate-800 border-purple-800/30"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="task-desc">Mô tả</Label>
+                            <Textarea
+                              id="task-desc"
+                              placeholder="Mô tả chi tiết nhiệm vụ"
+                              className="bg-slate-800 border-purple-800/30"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="task-milestone">Cột mốc</Label>
+                            <Select>
+                              <SelectTrigger className="bg-slate-800 border-purple-800/30">
+                                <SelectValue placeholder="Chọn cột mốc" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-slate-800 border-purple-800/30 text-white">
+                                {milestones.map((m) => (
+                                  <SelectItem key={m.id} value={m.id.toString()}>
+                                    {m.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div>
+                            <Label htmlFor="task-assignee">Giao cho</Label>
+                            <Select>
+                              <SelectTrigger className="bg-slate-800 border-purple-800/30">
+                                <SelectValue placeholder="Chọn thành viên" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-slate-800 border-purple-800/30 text-white">
+                                {projectData.team.map((member) => (
+                                  <SelectItem key={member.id} value={member.name}>
+                                    {member.name}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label htmlFor="task-credits">Tín chỉ</Label>
+                              <Input
+                                id="task-credits"
+                                type="number"
+                                placeholder="0"
+                                className="bg-slate-800 border-purple-800/30"
+                              />
+                            </div>
+                            <div>
+                              <Label htmlFor="task-due">Hạn chót</Label>
+                              <Input id="task-due" type="date" className="bg-slate-800 border-purple-800/30" />
+                            </div>
+                          </div>
+                        </div>
+                        <DialogFooter>
+                          <Button
+                            variant="outline"
+                            onClick={() => setAddTaskOpen(false)}
+                            className="border-purple-500 text-purple-300"
+                          >
+                            Hủy
+                          </Button>
+                          <Button className="bg-gradient-to-r from-purple-600 to-pink-600">Tạo Nhiệm vụ</Button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {filteredTasks.map((task) => {
+                    const milestone = milestones.find((m) => m.id === task.milestoneId)
+                    return (
+                      <div
+                        key={task.id}
+                        className={`p-4 rounded-lg border ${
+                          task.status === "completed"
+                            ? "bg-slate-800/30 border-slate-700/30"
+                            : task.status === "in-progress"
+                              ? "bg-gradient-to-r from-purple-900/20 to-pink-900/20 border-purple-500/30"
+                              : "bg-slate-900/30 border-purple-800/20"
+                        }`}
+                      >
+                        <div className="flex items-start gap-4">
+                          <Checkbox
+                            checked={task.status === "completed"}
+                            onCheckedChange={() => handleMarkTaskComplete(task.id)}
+                            className="mt-1"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-start justify-between mb-2">
+                              <div>
+                                <h4
+                                  className={`font-semibold mb-1 ${task.status === "completed" ? "text-slate-400 line-through" : "text-white"}`}
+                                >
+                                  {task.name}
+                                </h4>
+                                <p className="text-purple-300 text-sm mb-2">{task.description}</p>
+                                <div className="flex flex-wrap items-center gap-3 text-xs">
+                                  <Badge variant="outline" className="border-purple-500/30 text-purple-300">
+                                    {milestone?.name}
+                                  </Badge>
+                                  <span className="flex items-center gap-1 text-purple-400">
+                                    <Users className="w-3 h-3" />
+                                    {task.assignedTo}
+                                  </span>
+                                  <span className="flex items-center gap-1 text-purple-400">
+                                    <Calendar className="w-3 h-3" />
+                                    Hạn: {task.dueDate}
+                                  </span>
+                                  {task.completedDate && (
+                                    <span className="flex items-center gap-1 text-green-400">
+                                      <CheckCircle2 className="w-3 h-3" />
+                                      Hoàn thành: {task.completedDate}
+                                    </span>
+                                  )}
+                                  <span className="flex items-center gap-1 text-yellow-400">
+                                    <Zap className="w-3 h-3" />
+                                    {task.credits} tín chỉ
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Badge
+                                  className={
+                                    task.status === "completed"
+                                      ? "bg-green-900/50 text-green-300 border-green-500/30"
+                                      : task.status === "in-progress"
+                                        ? "bg-purple-900/50 text-purple-300 border-purple-500/30"
+                                        : "bg-slate-800 text-slate-400 border-slate-600/30"
+                                  }
+                                >
+                                  {task.status === "completed"
+                                    ? "Hoàn thành"
+                                    : task.status === "in-progress"
+                                      ? "Đang làm"
+                                      : "Chờ"}
+                                </Badge>
+                                {task.status !== "completed" && (
+                                  <Dialog
+                                    open={editTaskOpen && selectedTask?.id === task.id}
+                                    onOpenChange={(open) => {
+                                      setEditTaskOpen(open)
+                                      if (open) setSelectedTask(task)
+                                    }}
+                                  >
+                                    <DialogTrigger asChild>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        className="h-8 w-8 p-0 text-purple-300 hover:text-white hover:bg-purple-900/30"
+                                      >
+                                        <Edit className="w-4 h-4" />
+                                      </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="bg-slate-900 border-purple-800/30 text-white">
+                                      <DialogHeader>
+                                        <DialogTitle>Chỉnh sửa Nhiệm vụ</DialogTitle>
+                                        <DialogDescription className="text-purple-300">
+                                          Cập nhật thông tin nhiệm vụ
+                                        </DialogDescription>
+                                      </DialogHeader>
+                                      <div className="space-y-4">
+                                        <div>
+                                          <Label htmlFor="edit-task-name">Tên nhiệm vụ</Label>
+                                          <Input
+                                            id="edit-task-name"
+                                            defaultValue={task.name}
+                                            className="bg-slate-800 border-purple-800/30"
+                                          />
+                                        </div>
+                                        <div>
+                                          <Label htmlFor="edit-task-desc">Mô tả</Label>
+                                          <Textarea
+                                            id="edit-task-desc"
+                                            defaultValue={task.description}
+                                            className="bg-slate-800 border-purple-800/30"
+                                          />
+                                        </div>
+                                        <div>
+                                          <Label htmlFor="edit-task-status">Trạng thái</Label>
+                                          <Select defaultValue={task.status}>
+                                            <SelectTrigger className="bg-slate-800 border-purple-800/30">
+                                              <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent className="bg-slate-800 border-purple-800/30 text-white">
+                                              <SelectItem value="pending">Chờ xử lý</SelectItem>
+                                              <SelectItem value="in-progress">Đang thực hiện</SelectItem>
+                                              <SelectItem value="completed">Hoàn thành</SelectItem>
+                                            </SelectContent>
+                                          </Select>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                          <div>
+                                            <Label htmlFor="edit-task-credits">Tín chỉ</Label>
+                                            <Input
+                                              id="edit-task-credits"
+                                              type="number"
+                                              defaultValue={task.credits}
+                                              className="bg-slate-800 border-purple-800/30"
+                                            />
+                                          </div>
+                                          <div>
+                                            <Label htmlFor="edit-task-due">Hạn chót</Label>
+                                            <Input
+                                              id="edit-task-due"
+                                              type="date"
+                                              className="bg-slate-800 border-purple-800/30"
+                                            />
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <DialogFooter>
+                                        <Button
+                                          variant="outline"
+                                          onClick={() => setEditTaskOpen(false)}
+                                          className="border-purple-500 text-purple-300"
+                                        >
+                                          Hủy
+                                        </Button>
+                                        <Button className="bg-gradient-to-r from-purple-600 to-pink-600">
+                                          Lưu thay đổi
+                                        </Button>
+                                      </DialogFooter>
+                                    </DialogContent>
+                                  </Dialog>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Team Tab */}
           <TabsContent value="team">
             <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white">Team Members</CardTitle>
-                <CardDescription className="text-purple-300">
-                  Credits distribution and contribution breakdown
-                </CardDescription>
+                <CardTitle className="text-white">Thành viên Nhóm</CardTitle>
+                <CardDescription className="text-purple-300">Phân phối tín chỉ và phân tích đóng góp</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -498,11 +1058,11 @@ export default function ProjectDetailsPage() {
                             <Zap className="w-4 h-4 text-yellow-400" />
                             {member.credits}
                           </p>
-                          <p className="text-purple-400 text-xs">Credits Earned</p>
+                          <p className="text-purple-400 text-xs">Tín chỉ Kiếm được</p>
                         </div>
                         <div className="text-center">
                           <p className="text-white font-bold text-lg">{member.contributions}%</p>
-                          <p className="text-purple-400 text-xs">Contribution</p>
+                          <p className="text-purple-400 text-xs">Đóng góp</p>
                         </div>
                       </div>
                       <Button
@@ -511,7 +1071,7 @@ export default function ProjectDetailsPage() {
                         className="border-purple-500 text-purple-300 hover:bg-purple-900/30 bg-transparent"
                       >
                         <Award className="w-4 h-4 mr-2" />
-                        Award Credits
+                        Trao Tín chỉ
                       </Button>
                     </div>
                   ))}
@@ -524,8 +1084,8 @@ export default function ProjectDetailsPage() {
           <TabsContent value="activity">
             <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white">Project Activity</CardTitle>
-                <CardDescription className="text-purple-300">Recent updates and changes</CardDescription>
+                <CardTitle className="text-white">Hoạt động Dự án</CardTitle>
+                <CardDescription className="text-purple-300">Cập nhật và thay đổi gần đây</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -540,11 +1100,14 @@ export default function ProjectDetailsPage() {
                             ? "bg-purple-900/30 text-purple-400"
                             : activity.type === "credit"
                               ? "bg-yellow-900/30 text-yellow-400"
-                              : "bg-blue-900/30 text-blue-400"
+                              : activity.type === "task"
+                                ? "bg-blue-900/30 text-blue-400"
+                                : "bg-green-900/30 text-green-400"
                         }`}
                       >
                         {activity.type === "milestone" && <Target className="w-5 h-5" />}
                         {activity.type === "credit" && <Zap className="w-5 h-5" />}
+                        {activity.type === "task" && <ListTodo className="w-5 h-5" />}
                         {activity.type === "team" && <Users className="w-5 h-5" />}
                       </div>
                       <div className="flex-1">
@@ -561,7 +1124,7 @@ export default function ProjectDetailsPage() {
                               <span>•</span>
                               <span className="flex items-center gap-1 text-yellow-400">
                                 <Zap className="w-3 h-3" />
-                                {activity.credits} credits
+                                {activity.credits} tín chỉ
                               </span>
                             </>
                           )}

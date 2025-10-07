@@ -5,16 +5,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Zap, Trophy, Crown, Medal, Award, Target, Flame, Users } from "lucide-react"
 import Link from "next/link"
-import { UserNav } from "@/components/user-nav"
 
-// Mock data
 const topMembers = [
   {
     id: 1,
     rank: 1,
-    name: "Le Van C",
+    name: "Lê Văn C",
     avatar: "/placeholder.svg?height=100&width=100",
-    role: "Senior Developer",
+    role: "Lập trình viên Senior",
     totalCredits: 3150,
     projectsCompleted: 3,
     achievements: 12,
@@ -24,9 +22,9 @@ const topMembers = [
   {
     id: 2,
     rank: 2,
-    name: "Hoang Thi E",
+    name: "Hoàng Thị E",
     avatar: "/placeholder.svg?height=100&width=100",
-    role: "Lead Designer",
+    role: "Trưởng nhóm Thiết kế",
     totalCredits: 2890,
     projectsCompleted: 2,
     achievements: 10,
@@ -36,9 +34,9 @@ const topMembers = [
   {
     id: 3,
     rank: 3,
-    name: "Nguyen Van A",
+    name: "Nguyễn Văn A",
     avatar: "/placeholder.svg?height=100&width=100",
-    role: "Developer",
+    role: "Lập trình viên",
     totalCredits: 2450,
     projectsCompleted: 2,
     achievements: 8,
@@ -52,9 +50,9 @@ const allMembers = [
   {
     id: 4,
     rank: 4,
-    name: "Vo Thi F",
+    name: "Võ Thị F",
     avatar: "/placeholder.svg?height=100&width=100",
-    role: "Project Manager",
+    role: "Quản lý Dự án",
     totalCredits: 2120,
     projectsCompleted: 2,
     achievements: 9,
@@ -64,9 +62,9 @@ const allMembers = [
   {
     id: 5,
     rank: 5,
-    name: "Pham Thi D",
+    name: "Phạm Thị D",
     avatar: "/placeholder.svg?height=100&width=100",
-    role: "Project Manager",
+    role: "Quản lý Dự án",
     totalCredits: 1950,
     projectsCompleted: 1,
     achievements: 7,
@@ -76,9 +74,9 @@ const allMembers = [
   {
     id: 6,
     rank: 6,
-    name: "Do Van G",
+    name: "Đỗ Văn G",
     avatar: "/placeholder.svg?height=100&width=100",
-    role: "Developer",
+    role: "Lập trình viên",
     totalCredits: 1880,
     projectsCompleted: 2,
     achievements: 6,
@@ -88,9 +86,9 @@ const allMembers = [
   {
     id: 7,
     rank: 7,
-    name: "Tran Thi B",
+    name: "Trần Thị B",
     avatar: "/placeholder.svg?height=100&width=100",
-    role: "Designer",
+    role: "Thiết kế",
     totalCredits: 1820,
     projectsCompleted: 1,
     achievements: 8,
@@ -100,9 +98,9 @@ const allMembers = [
   {
     id: 8,
     rank: 8,
-    name: "Bui Van H",
+    name: "Bùi Văn H",
     avatar: "/placeholder.svg?height=100&width=100",
-    role: "Developer",
+    role: "Lập trình viên",
     totalCredits: 1650,
     projectsCompleted: 1,
     achievements: 5,
@@ -115,41 +113,41 @@ const topProjects = [
   {
     id: 1,
     rank: 1,
-    name: "Space Shooter",
-    leader: "Le Van C",
+    name: "Bắn Súng Không Gian",
+    leader: "Lê Văn C",
     totalCredits: 3500,
     members: 6,
-    status: "Released",
-    revenue: "$2,500",
+    status: "Đã phát hành",
+    revenue: "2.500$",
   },
   {
     id: 2,
     rank: 2,
-    name: "Dragon Quest RPG",
-    leader: "Nguyen Van A",
+    name: "RPG Nhiệm Vụ Rồng",
+    leader: "Nguyễn Văn A",
     totalCredits: 3000,
     members: 5,
-    status: "Active",
+    status: "Đang hoạt động",
     revenue: "-",
   },
   {
     id: 3,
     rank: 3,
-    name: "Racing Legends",
-    leader: "Pham Thi D",
+    name: "Huyền Thoại Đua Xe",
+    leader: "Phạm Thị D",
     totalCredits: 2800,
     members: 5,
-    status: "Active",
+    status: "Đang hoạt động",
     revenue: "-",
   },
   {
     id: 4,
     rank: 4,
-    name: "Puzzle Master",
-    leader: "Tran Thi B",
+    name: "Bậc Thầy Giải Đố",
+    leader: "Trần Thị B",
     totalCredits: 2500,
     members: 4,
-    status: "Active",
+    status: "Đang hoạt động",
     revenue: "-",
   },
 ]
@@ -157,64 +155,63 @@ const topProjects = [
 const globalAchievements = [
   {
     id: 1,
-    name: "First Blood",
-    description: "Complete your first milestone",
+    name: "Máu Đầu Tiên",
+    description: "Hoàn thành cột mốc đầu tiên của bạn",
     icon: "🎯",
     unlockedBy: 24,
     totalMembers: 24,
-    rarity: "common",
+    rarity: "phổ biến",
   },
   {
     id: 2,
-    name: "Team Player",
-    description: "Collaborate on 3 projects",
+    name: "Người Đồng Đội",
+    description: "Cộng tác trong 3 dự án",
     icon: "🤝",
     unlockedBy: 18,
     totalMembers: 24,
-    rarity: "common",
+    rarity: "phổ biến",
   },
   {
     id: 3,
-    name: "Speed Demon",
-    description: "Complete a milestone in 1 week",
+    name: "Ác Quỷ Tốc Độ",
+    description: "Hoàn thành cột mốc trong 1 tuần",
     icon: "⚡",
     unlockedBy: 15,
     totalMembers: 24,
-    rarity: "uncommon",
+    rarity: "không phổ biến",
   },
   {
     id: 4,
-    name: "Release Master",
-    description: "Ship a game to production",
+    name: "Bậc Thầy Phát Hành",
+    description: "Phát hành game lên production",
     icon: "🚀",
     unlockedBy: 8,
     totalMembers: 24,
-    rarity: "rare",
+    rarity: "hiếm",
   },
   {
     id: 5,
-    name: "Credit King",
-    description: "Earn 5000 total credits",
+    name: "Vua Tín Chỉ",
+    description: "Kiếm được 5000 tín chỉ tổng cộng",
     icon: "👑",
     unlockedBy: 2,
     totalMembers: 24,
-    rarity: "epic",
+    rarity: "sử thi",
   },
   {
     id: 6,
-    name: "Perfectionist",
-    description: "Complete 10 milestones with 100% quality",
+    name: "Người Hoàn Hảo",
+    description: "Hoàn thành 10 cột mốc với chất lượng 100%",
     icon: "💎",
     unlockedBy: 1,
     totalMembers: 24,
-    rarity: "legendary",
+    rarity: "huyền thoại",
   },
 ]
 
 export default function LeaderboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950">
-      {/* Header */}
       <header className="border-b border-purple-800/30 bg-slate-950/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
@@ -223,39 +220,37 @@ export default function LeaderboardPage() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">FusionLab Credits</h1>
-              <p className="text-xs text-purple-300">Leaderboard</p>
+              <p className="text-xs text-purple-300">Bảng Xếp Hạng</p>
             </div>
           </Link>
           <nav className="flex items-center gap-4">
             <Link href="/dashboard">
               <Button variant="ghost" className="text-purple-200 hover:text-white hover:bg-purple-900/30">
-                Dashboard
+                Bảng Điều Khiển
               </Button>
             </Link>
             <Link href="/admin">
               <Button variant="ghost" className="text-purple-200 hover:text-white hover:bg-purple-900/30">
-                Admin
+                Quản Trị
               </Button>
             </Link>
-            <UserNav />
           </nav>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Hero Section */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-900/30 border border-purple-500/30 rounded-full text-purple-300 text-sm mb-4">
             <Trophy className="w-4 h-4" />
-            <span>Spring 2025 Season</span>
+            <span>Mùa Xuân 2025</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Hall of Fame</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">Đại Sảnh Danh Vọng</h2>
           <p className="text-xl text-purple-200 max-w-2xl mx-auto">
-            Compete with your peers and climb the ranks to become a FusionLab legend
+            Cạnh tranh với đồng nghiệp và leo hạng để trở thành huyền thoại FusionLab
           </p>
         </div>
 
-        {/* Top 3 Podium */}
+        {/* Top 3 Podium - keeping structure, updating text */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto">
           {/* 2nd Place */}
           <div className="md:order-1 order-2">
@@ -375,7 +370,6 @@ export default function LeaderboardPage() {
           </div>
         </div>
 
-        {/* Tabs for different leaderboards */}
         <Tabs defaultValue="members" className="space-y-6">
           <TabsList className="bg-slate-900/50 border border-purple-800/30">
             <TabsTrigger
@@ -383,30 +377,29 @@ export default function LeaderboardPage() {
               className="data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
             >
               <Users className="w-4 h-4 mr-2" />
-              Members
+              Thành Viên
             </TabsTrigger>
             <TabsTrigger
               value="projects"
               className="data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
             >
               <Target className="w-4 h-4 mr-2" />
-              Projects
+              Dự Án
             </TabsTrigger>
             <TabsTrigger
               value="achievements"
               className="data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
             >
               <Award className="w-4 h-4 mr-2" />
-              Achievements
+              Thành Tựu
             </TabsTrigger>
           </TabsList>
 
-          {/* Members Leaderboard */}
           <TabsContent value="members">
             <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white">All Members Rankings</CardTitle>
-                <CardDescription className="text-purple-300">Ranked by total credits earned</CardDescription>
+                <CardTitle className="text-white">Xếp Hạng Tất Cả Thành Viên</CardTitle>
+                <CardDescription className="text-purple-300">Xếp hạng theo tổng tín chỉ kiếm được</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -445,26 +438,26 @@ export default function LeaderboardPage() {
                       <div className="flex items-center gap-6 text-sm">
                         <div className="text-center">
                           <p className="text-white font-bold text-lg">{member.totalCredits}</p>
-                          <p className="text-purple-400 text-xs">Credits</p>
+                          <p className="text-purple-400 text-xs">Tín chỉ</p>
                         </div>
                         <div className="text-center">
                           <p className="text-white font-bold">{member.projectsCompleted}</p>
-                          <p className="text-purple-400 text-xs">Projects</p>
+                          <p className="text-purple-400 text-xs">Dự án</p>
                         </div>
                         <div className="text-center">
                           <p className="text-white font-bold">{member.achievements}</p>
-                          <p className="text-purple-400 text-xs">Achievements</p>
+                          <p className="text-purple-400 text-xs">Thành tựu</p>
                         </div>
                         <div className="text-center">
                           <p className="text-orange-400 font-bold flex items-center gap-1">
                             <Flame className="w-4 h-4" />
                             {member.streak}
                           </p>
-                          <p className="text-purple-400 text-xs">Streak</p>
+                          <p className="text-purple-400 text-xs">Chuỗi</p>
                         </div>
                       </div>
                       <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0">
-                        Lvl {member.level}
+                        Cấp {member.level}
                       </Badge>
                     </div>
                   ))}
@@ -473,12 +466,11 @@ export default function LeaderboardPage() {
             </Card>
           </TabsContent>
 
-          {/* Projects Leaderboard */}
           <TabsContent value="projects">
             <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white">Top Projects</CardTitle>
-                <CardDescription className="text-purple-300">Ranked by total credits allocated</CardDescription>
+                <CardTitle className="text-white">Dự Án Hàng Đầu</CardTitle>
+                <CardDescription className="text-purple-300">Xếp hạng theo tổng tín chỉ được phân bổ</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
@@ -496,21 +488,21 @@ export default function LeaderboardPage() {
                       </div>
                       <div className="flex-1">
                         <h4 className="text-white font-semibold text-lg">{project.name}</h4>
-                        <p className="text-sm text-purple-300">Led by {project.leader}</p>
+                        <p className="text-sm text-purple-300">Dẫn dắt bởi {project.leader}</p>
                       </div>
                       <div className="flex items-center gap-6 text-sm">
                         <div className="text-center">
                           <p className="text-white font-bold text-lg">{project.totalCredits}</p>
-                          <p className="text-purple-400 text-xs">Credits</p>
+                          <p className="text-purple-400 text-xs">Tín chỉ</p>
                         </div>
                         <div className="text-center">
                           <p className="text-white font-bold">{project.members}</p>
-                          <p className="text-purple-400 text-xs">Members</p>
+                          <p className="text-purple-400 text-xs">Thành viên</p>
                         </div>
                         <div className="text-center">
                           <Badge
                             className={
-                              project.status === "Released"
+                              project.status === "Đã phát hành"
                                 ? "bg-green-900/50 text-green-300 border-green-500/30"
                                 : "bg-blue-900/50 text-blue-300 border-blue-500/30"
                             }
@@ -521,7 +513,7 @@ export default function LeaderboardPage() {
                         {project.revenue !== "-" && (
                           <div className="text-center">
                             <p className="text-green-400 font-bold">{project.revenue}</p>
-                            <p className="text-purple-400 text-xs">Revenue</p>
+                            <p className="text-purple-400 text-xs">Doanh thu</p>
                           </div>
                         )}
                       </div>
@@ -532,13 +524,12 @@ export default function LeaderboardPage() {
             </Card>
           </TabsContent>
 
-          {/* Achievements */}
           <TabsContent value="achievements">
             <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white">Global Achievements</CardTitle>
+                <CardTitle className="text-white">Thành Tựu Toàn Cầu</CardTitle>
                 <CardDescription className="text-purple-300">
-                  See how many members have unlocked each achievement
+                  Xem có bao nhiêu thành viên đã mở khóa mỗi thành tựu
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -549,11 +540,11 @@ export default function LeaderboardPage() {
                       <div
                         key={achievement.id}
                         className={`p-4 rounded-lg border ${
-                          achievement.rarity === "legendary"
+                          achievement.rarity === "huyền thoại"
                             ? "bg-gradient-to-br from-purple-900/50 to-pink-900/50 border-purple-500/30"
-                            : achievement.rarity === "epic"
-                              ? "bg-gradient-to-br from-purple-900/30 to-blue-900/30 border-purple-500/20"
-                              : achievement.rarity === "rare"
+                            : achievement.rarity === "sử thi"
+                              ? "bg-gradient-to-br from-purple-900/50 to-blue-900/50 border-purple-500/20"
+                              : achievement.rarity === "hiếm"
                                 ? "bg-gradient-to-br from-blue-900/30 to-cyan-900/30 border-blue-500/20"
                                 : "bg-slate-800/30 border-slate-700/30"
                         }`}
@@ -565,13 +556,13 @@ export default function LeaderboardPage() {
                               <h4 className="text-white font-semibold">{achievement.name}</h4>
                               <Badge
                                 className={
-                                  achievement.rarity === "legendary"
+                                  achievement.rarity === "huyền thoại"
                                     ? "bg-purple-600 text-white border-0"
-                                    : achievement.rarity === "epic"
+                                    : achievement.rarity === "sử thi"
                                       ? "bg-purple-700 text-white border-0"
-                                      : achievement.rarity === "rare"
+                                      : achievement.rarity === "hiếm"
                                         ? "bg-blue-600 text-white border-0"
-                                        : achievement.rarity === "uncommon"
+                                        : achievement.rarity === "không phổ biến"
                                           ? "bg-green-600 text-white border-0"
                                           : "bg-slate-600 text-white border-0"
                                 }
@@ -583,7 +574,7 @@ export default function LeaderboardPage() {
                             <div className="space-y-2">
                               <div className="flex items-center justify-between text-sm">
                                 <span className="text-purple-400">
-                                  {achievement.unlockedBy} / {achievement.totalMembers} members
+                                  {achievement.unlockedBy} / {achievement.totalMembers} thành viên
                                 </span>
                                 <span className="text-white font-semibold">{percentage.toFixed(0)}%</span>
                               </div>

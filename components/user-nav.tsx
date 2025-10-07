@@ -24,7 +24,7 @@ export function UserNav() {
     return (
       <div className="flex gap-2">
         <Button variant="ghost" asChild>
-          <a href="/auth/login">Sign In</a>
+          <a className="text-white" href="/auth/login">Sign In</a>
         </Button>
         <Button
           asChild

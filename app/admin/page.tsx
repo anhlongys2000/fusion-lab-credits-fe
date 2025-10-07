@@ -1,567 +1,371 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Zap, Users, Target, TrendingUp, Plus, Search, Settings, DollarSign, Award, Edit, Eye } from "lucide-react"
-import Link from "next/link"
-import { UserNav } from "@/components/user-nav"
+import { Zap, Users, Target, TrendingUp, Award, ArrowUpRight, ArrowDownRight } from "lucide-react"
+import { Bar, BarChart, Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts"
 
-// Mock data
-const stats = {
-  totalMembers: 24,
-  activeProjects: 8,
-  totalCreditsDistributed: 15200,
-  pendingApprovals: 3,
-}
-
-const projects = [
-  {
-    id: 1,
-    name: "Dragon Quest RPG",
-    leader: "Nguyen Van A",
-    members: 5,
-    semester: "Spring 2025",
-    status: "active",
-    progress: 75,
-    creditsAllocated: 3000,
-    creditsDistributed: 2250,
-    milestones: { completed: 6, total: 8 },
-  },
-  {
-    id: 2,
-    name: "Puzzle Master",
-    leader: "Tran Thi B",
-    members: 4,
-    semester: "Spring 2025",
-    status: "active",
-    progress: 45,
-    creditsAllocated: 2500,
-    creditsDistributed: 1125,
-    milestones: { completed: 3, total: 7 },
-  },
-  {
-    id: 3,
-    name: "Space Shooter",
-    leader: "Le Van C",
-    members: 6,
-    semester: "Fall 2024",
-    status: "completed",
-    progress: 100,
-    creditsAllocated: 3500,
-    creditsDistributed: 3500,
-    milestones: { completed: 5, total: 5 },
-  },
-  {
-    id: 4,
-    name: "Racing Legends",
-    leader: "Pham Thi D",
-    members: 5,
-    semester: "Spring 2025",
-    status: "active",
-    progress: 30,
-    creditsAllocated: 2800,
-    creditsDistributed: 840,
-    milestones: { completed: 2, total: 6 },
-  },
+// Mock data for charts
+const creditDistributionData = [
+  { month: "Jan", credits: 1200 },
+  { month: "Feb", credits: 1800 },
+  { month: "Mar", credits: 2400 },
+  { month: "Apr", credits: 2100 },
+  { month: "May", credits: 2800 },
+  { month: "Jun", credits: 3200 },
 ]
 
-const members = [
-  {
-    id: 1,
-    name: "Nguyen Van A",
-    email: "nguyenvana@example.com",
-    role: "Developer",
-    semester: "Spring 2025",
-    projects: 2,
-    totalCredits: 2450,
-    rank: 3,
-  },
-  {
-    id: 2,
-    name: "Tran Thi B",
-    email: "tranthib@example.com",
-    role: "Designer",
-    semester: "Spring 2025",
-    projects: 1,
-    totalCredits: 1820,
-    rank: 7,
-  },
-  {
-    id: 3,
-    name: "Le Van C",
-    email: "levanc@example.com",
-    role: "Developer",
-    semester: "Fall 2024",
-    projects: 3,
-    totalCredits: 3150,
-    rank: 1,
-  },
-  {
-    id: 4,
-    name: "Pham Thi D",
-    email: "phamthid@example.com",
-    role: "Project Manager",
-    semester: "Spring 2025",
-    projects: 1,
-    totalCredits: 1950,
-    rank: 5,
-  },
+const projectProgressData = [
+  { name: "Dragon Quest", progress: 75 },
+  { name: "Puzzle Master", progress: 45 },
+  { name: "Racing Legends", progress: 30 },
+  { name: "Space Shooter", progress: 100 },
+  { name: "Tower Defense", progress: 60 },
 ]
 
-const pendingRequests = [
+const recentActivity = [
   {
     id: 1,
     type: "credit_distribution",
     project: "Dragon Quest RPG",
-    requester: "Nguyen Van A",
     amount: 500,
-    reason: "Milestone 7 completed - Boss battle system",
-    date: "2 hours ago",
+    user: "Nguyễn Văn A",
+    time: "2 giờ trước",
   },
   {
     id: 2,
-    type: "redemption",
-    member: "Tran Thi B",
-    amount: 800,
-    redeemFor: "Cash reward",
-    date: "5 hours ago",
-  },
-  {
-    id: 3,
-    type: "credit_distribution",
+    type: "milestone_completed",
     project: "Puzzle Master",
-    requester: "Tran Thi B",
-    amount: 300,
-    reason: "UI/UX design completion",
-    date: "1 day ago",
-  },
-]
-
-const creditTransactions = [
-  {
-    id: 1,
-    type: "allocation",
-    project: "Dragon Quest RPG",
-    amount: 500,
-    from: "Lab Pool",
-    to: "Project",
-    date: "2025-01-15",
-    status: "completed",
-  },
-  {
-    id: 2,
-    type: "distribution",
-    project: "Space Shooter",
-    amount: 300,
-    from: "Project Manager",
-    to: "Le Van C",
-    date: "2025-01-14",
-    status: "completed",
+    milestone: "Thiết kế UI/UX",
+    user: "Trần Thị B",
+    time: "5 giờ trước",
   },
   {
     id: 3,
     type: "redemption",
-    member: "Nguyen Van A",
-    amount: 200,
-    from: "Member",
-    to: "Cash",
-    date: "2025-01-13",
-    status: "completed",
+    amount: 800,
+    user: "Lê Văn C",
+    time: "1 ngày trước",
+  },
+  {
+    id: 4,
+    type: "project_created",
+    project: "Tower Defense Pro",
+    user: "Phạm Thị D",
+    time: "2 ngày trước",
   },
 ]
 
-export default function AdminPage() {
+const pendingApprovals = [
+  {
+    id: 1,
+    type: "credit_request",
+    project: "Dragon Quest RPG",
+    requester: "Nguyễn Văn A",
+    amount: 500,
+    reason: "Milestone 7 hoàn thành",
+  },
+  {
+    id: 2,
+    type: "redemption",
+    requester: "Trần Thị B",
+    amount: 800,
+    reason: "Yêu cầu đổi tiền mặt",
+  },
+  {
+    id: 3,
+    type: "credit_request",
+    project: "Puzzle Master",
+    requester: "Trần Thị B",
+    amount: 300,
+    reason: "Hoàn thành UI/UX",
+  },
+]
+
+export default function AdminDashboard() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950">
+    <div className="p-8 space-y-8">
       {/* Header */}
-      <header className="border-b border-purple-800/30 bg-slate-950/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-              <Zap className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-white">FusionLab Credits</h1>
-              <p className="text-xs text-purple-300">Admin Dashboard</p>
-            </div>
-          </Link>
-          <nav className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" className="text-purple-200 hover:text-white hover:bg-purple-900/30">
-                Member View
-              </Button>
-            </Link>
-            <Link href="/leaderboard">
-              <Button variant="ghost" className="text-purple-200 hover:text-white hover:bg-purple-900/30">
-                Leaderboard
-              </Button>
-            </Link>
-            <Button variant="ghost" size="icon" className="text-purple-200 hover:text-white hover:bg-purple-900/30">
-              <Settings className="w-5 h-5" />
-            </Button>
-            <UserNav />
-          </nav>
-        </div>
-      </header>
+      <div>
+        <h1 className="text-3xl font-bold text-white mb-2">Tổng quan Dashboard</h1>
+        <p className="text-purple-300">Chào mừng trở lại! Đây là những gì đang diễn ra trong phòng lab của bạn.</p>
+      </div>
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-purple-300 mb-1">Total Members</p>
-                  <p className="text-3xl font-bold text-white">{stats.totalMembers}</p>
-                </div>
-                <Users className="w-10 h-10 text-purple-400" />
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-purple-900/30 rounded-lg flex items-center justify-center">
+                <Users className="w-6 h-6 text-purple-400" />
               </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-purple-300 mb-1">Active Projects</p>
-                  <p className="text-3xl font-bold text-white">{stats.activeProjects}</p>
-                </div>
-                <Target className="w-10 h-10 text-pink-400" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-purple-300 mb-1">Credits Distributed</p>
-                  <p className="text-3xl font-bold text-white">{stats.totalCreditsDistributed.toLocaleString()}</p>
-                </div>
-                <Zap className="w-10 h-10 text-yellow-400" />
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-purple-300 mb-1">Pending Approvals</p>
-                  <p className="text-3xl font-bold text-white">{stats.pendingApprovals}</p>
-                </div>
-                <TrendingUp className="w-10 h-10 text-green-400" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              <Badge className="bg-green-900/50 text-green-300 border-green-500/30">
+                <ArrowUpRight className="w-3 h-3 mr-1" />
+                12%
+              </Badge>
+            </div>
+            <p className="text-2xl font-bold text-white mb-1">24</p>
+            <p className="text-sm text-purple-300">Thành viên hoạt động</p>
+          </CardContent>
+        </Card>
 
-        {/* Pending Requests */}
-        {pendingRequests.length > 0 && (
-          <Card className="bg-gradient-to-r from-orange-900/30 to-red-900/30 border-orange-500/30 backdrop-blur-sm mb-8">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Award className="w-5 h-5 text-orange-400" />
-                Pending Approvals ({pendingRequests.length})
-              </CardTitle>
-              <CardDescription className="text-orange-200">Review and approve credit requests</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {pendingRequests.map((request) => (
-                  <div
-                    key={request.id}
-                    className="flex items-center justify-between p-4 bg-slate-900/50 rounded-lg border border-orange-500/20"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Badge
-                          className={
-                            request.type === "credit_distribution"
-                              ? "bg-purple-900/50 text-purple-300 border-purple-500/30"
-                              : "bg-blue-900/50 text-blue-300 border-blue-500/30"
-                          }
-                        >
-                          {request.type === "credit_distribution" ? "Credit Distribution" : "Redemption"}
-                        </Badge>
-                        <span className="text-white font-semibold">
-                          {request.project || request.member} - {request.amount} credits
-                        </span>
-                      </div>
-                      <p className="text-sm text-purple-300">
-                        {request.reason || request.redeemFor} • Requested by {request.requester || request.member} •{" "}
-                        {request.date}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white">
-                        Approve
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="border-red-500 text-red-400 hover:bg-red-900/30 bg-transparent"
+        <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-pink-900/30 rounded-lg flex items-center justify-center">
+                <Target className="w-6 h-6 text-pink-400" />
+              </div>
+              <Badge className="bg-green-900/50 text-green-300 border-green-500/30">
+                <ArrowUpRight className="w-3 h-3 mr-1" />
+                8%
+              </Badge>
+            </div>
+            <p className="text-2xl font-bold text-white mb-1">8</p>
+            <p className="text-sm text-purple-300">Dự án đang hoạt động</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-yellow-900/30 rounded-lg flex items-center justify-center">
+                <Zap className="w-6 h-6 text-yellow-400" />
+              </div>
+              <Badge className="bg-green-900/50 text-green-300 border-green-500/30">
+                <ArrowUpRight className="w-3 h-3 mr-1" />
+                24%
+              </Badge>
+            </div>
+            <p className="text-2xl font-bold text-white mb-1">15.2K</p>
+            <p className="text-sm text-purple-300">Tín chỉ đã phân phối</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-orange-900/30 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-orange-400" />
+              </div>
+              <Badge className="bg-red-900/50 text-red-300 border-red-500/30">
+                <ArrowDownRight className="w-3 h-3 mr-1" />
+                3%
+              </Badge>
+            </div>
+            <p className="text-2xl font-bold text-white mb-1">3</p>
+            <p className="text-sm text-purple-300">Chờ phê duyệt</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Credit Distribution Chart */}
+        <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-white">Phân phối tín chỉ</CardTitle>
+            <CardDescription className="text-purple-300">Tín chỉ phân phối hàng tháng theo thời gian</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={creditDistributionData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#4c1d95" opacity={0.3} />
+                <XAxis dataKey="month" stroke="#a78bfa" />
+                <YAxis stroke="#a78bfa" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1e1b4b",
+                    border: "1px solid #6d28d9",
+                    borderRadius: "8px",
+                    color: "#fff",
+                  }}
+                />
+                <Line type="monotone" dataKey="credits" stroke="#a855f7" strokeWidth={2} dot={{ fill: "#a855f7" }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Project Progress Chart */}
+        <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-white">Tiến độ dự án</CardTitle>
+            <CardDescription className="text-purple-300">Tiến độ hiện tại của các dự án đang hoạt động</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={projectProgressData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#4c1d95" opacity={0.3} />
+                <XAxis dataKey="name" stroke="#a78bfa" angle={-15} textAnchor="end" height={80} />
+                <YAxis stroke="#a78bfa" />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: "#1e1b4b",
+                    border: "1px solid #6d28d9",
+                    borderRadius: "8px",
+                    color: "#fff",
+                  }}
+                />
+                <Bar dataKey="progress" fill="url(#colorGradient)" radius={[8, 8, 0, 0]} />
+                <defs>
+                  <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#a855f7" />
+                    <stop offset="100%" stopColor="#ec4899" />
+                  </linearGradient>
+                </defs>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Bottom Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Pending Approvals */}
+        <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Award className="w-5 h-5 text-orange-400" />
+                  Chờ phê duyệt
+                </CardTitle>
+                <CardDescription className="text-purple-300">Yêu cầu đang chờ xem xét của bạn</CardDescription>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-purple-500 text-purple-300 hover:bg-purple-900/30 bg-transparent"
+              >
+                Xem tất cả
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {pendingApprovals.map((approval) => (
+                <div
+                  key={approval.id}
+                  className="flex items-center justify-between p-3 bg-slate-800/50 rounded-lg border border-purple-800/30"
+                >
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Badge
+                        className={
+                          approval.type === "credit_request"
+                            ? "bg-purple-900/50 text-purple-300 border-purple-500/30"
+                            : "bg-blue-900/50 text-blue-300 border-blue-500/30"
+                        }
                       >
-                        Reject
-                      </Button>
+                        {approval.type === "credit_request" ? "Yêu cầu tín chỉ" : "Đổi thưởng"}
+                      </Badge>
+                      {approval.amount && (
+                        <span className="text-white font-semibold flex items-center gap-1">
+                          <Zap className="w-3 h-3 text-yellow-400" />
+                          {approval.amount}
+                        </span>
+                      )}
                     </div>
+                    <p className="text-sm text-purple-300">
+                      {approval.project && `${approval.project} • `}
+                      {approval.requester} • {approval.reason}
+                    </p>
                   </div>
-                ))}
+                  <div className="flex items-center gap-2">
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white h-8">
+                      Phê duyệt
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-red-500 text-red-400 hover:bg-red-900/30 bg-transparent h-8"
+                    >
+                      Từ chối
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Activity */}
+        <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-white">Hoạt động gần đây</CardTitle>
+                <CardDescription className="text-purple-300">Các hành động mới nhất trong hệ thống</CardDescription>
               </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Main Content Tabs */}
-        <Tabs defaultValue="projects" className="space-y-6">
-          <TabsList className="bg-slate-900/50 border border-purple-800/30">
-            <TabsTrigger
-              value="projects"
-              className="data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
-            >
-              Projects
-            </TabsTrigger>
-            <TabsTrigger
-              value="members"
-              className="data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
-            >
-              Members
-            </TabsTrigger>
-            <TabsTrigger
-              value="transactions"
-              className="data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
-            >
-              Transactions
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Projects Tab */}
-          <TabsContent value="projects" className="space-y-4">
-            <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-white">Project Management</CardTitle>
-                    <CardDescription className="text-purple-300">Manage projects and allocate credits</CardDescription>
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-purple-500 text-purple-300 hover:bg-purple-900/30 bg-transparent"
+              >
+                Xem tất cả
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {recentActivity.map((activity) => (
+                <div key={activity.id} className="flex items-start gap-3">
+                  <div
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                      activity.type === "credit_distribution"
+                        ? "bg-purple-900/30"
+                        : activity.type === "milestone_completed"
+                          ? "bg-green-900/30"
+                          : activity.type === "redemption"
+                            ? "bg-blue-900/30"
+                            : "bg-pink-900/30"
+                    }`}
+                  >
+                    {activity.type === "credit_distribution" ? (
+                      <Zap className="w-5 h-5 text-yellow-400" />
+                    ) : activity.type === "milestone_completed" ? (
+                      <Target className="w-5 h-5 text-green-400" />
+                    ) : activity.type === "redemption" ? (
+                      <TrendingUp className="w-5 h-5 text-blue-400" />
+                    ) : (
+                      <Award className="w-5 h-5 text-pink-400" />
+                    )}
                   </div>
-                  <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
-                    <Plus className="w-4 h-4 mr-2" />
-                    New Project
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-purple-400" />
-                    <Input
-                      placeholder="Search projects..."
-                      className="pl-10 bg-slate-800/50 border-purple-800/30 text-white placeholder:text-purple-400"
-                    />
-                  </div>
-                </div>
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-purple-800/30 hover:bg-transparent">
-                      <TableHead className="text-purple-300">Project</TableHead>
-                      <TableHead className="text-purple-300">Leader</TableHead>
-                      <TableHead className="text-purple-300">Status</TableHead>
-                      <TableHead className="text-purple-300">Progress</TableHead>
-                      <TableHead className="text-purple-300">Credits</TableHead>
-                      <TableHead className="text-purple-300">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {projects.map((project) => (
-                      <TableRow key={project.id} className="border-purple-800/30 hover:bg-purple-900/20">
-                        <TableCell>
-                          <div>
-                            <p className="text-white font-semibold">{project.name}</p>
-                            <p className="text-sm text-purple-400">
-                              {project.members} members • {project.semester}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-purple-200">{project.leader}</TableCell>
-                        <TableCell>
-                          <Badge
-                            className={
-                              project.status === "active"
-                                ? "bg-green-900/50 text-green-300 border-green-500/30"
-                                : "bg-slate-800 text-slate-300"
-                            }
-                          >
-                            {project.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span className="text-white text-sm">{project.progress}%</span>
-                            <span className="text-purple-400 text-xs">
-                              ({project.milestones.completed}/{project.milestones.total})
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div>
-                            <p className="text-white font-semibold">{project.creditsDistributed}</p>
-                            <p className="text-xs text-purple-400">of {project.creditsAllocated}</p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Button size="sm" variant="ghost" className="text-purple-300 hover:bg-purple-900/30">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="ghost" className="text-purple-300 hover:bg-purple-900/30">
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="ghost" className="text-purple-300 hover:bg-purple-900/30">
-                              <DollarSign className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Members Tab */}
-          <TabsContent value="members" className="space-y-4">
-            <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-white">Member Management</CardTitle>
-                    <CardDescription className="text-purple-300">View and manage lab members</CardDescription>
-                  </div>
-                  <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Member
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-purple-400" />
-                    <Input
-                      placeholder="Search members..."
-                      className="pl-10 bg-slate-800/50 border-purple-800/30 text-white placeholder:text-purple-400"
-                    />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-white font-medium">
+                      {activity.type === "credit_distribution" && (
+                        <>
+                          <span className="text-purple-300">{activity.user}</span> nhận được{" "}
+                          <span className="text-yellow-400">{activity.amount} tín chỉ</span> từ {activity.project}
+                        </>
+                      )}
+                      {activity.type === "milestone_completed" && (
+                        <>
+                          <span className="text-purple-300">{activity.user}</span> hoàn thành{" "}
+                          <span className="text-green-400">{activity.milestone}</span> trong {activity.project}
+                        </>
+                      )}
+                      {activity.type === "redemption" && (
+                        <>
+                          <span className="text-purple-300">{activity.user}</span> đã đổi{" "}
+                          <span className="text-blue-400">{activity.amount} tín chỉ</span>
+                        </>
+                      )}
+                      {activity.type === "project_created" && (
+                        <>
+                          <span className="text-purple-300">{activity.user}</span> tạo dự án mới{" "}
+                          <span className="text-pink-400">{activity.project}</span>
+                        </>
+                      )}
+                    </p>
+                    <p className="text-xs text-purple-400 mt-1">{activity.time}</p>
                   </div>
                 </div>
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-purple-800/30 hover:bg-transparent">
-                      <TableHead className="text-purple-300">Member</TableHead>
-                      <TableHead className="text-purple-300">Role</TableHead>
-                      <TableHead className="text-purple-300">Semester</TableHead>
-                      <TableHead className="text-purple-300">Projects</TableHead>
-                      <TableHead className="text-purple-300">Total Credits</TableHead>
-                      <TableHead className="text-purple-300">Rank</TableHead>
-                      <TableHead className="text-purple-300">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {members.map((member) => (
-                      <TableRow key={member.id} className="border-purple-800/30 hover:bg-purple-900/20">
-                        <TableCell>
-                          <div>
-                            <p className="text-white font-semibold">{member.name}</p>
-                            <p className="text-sm text-purple-400">{member.email}</p>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-purple-200">{member.role}</TableCell>
-                        <TableCell className="text-purple-200">{member.semester}</TableCell>
-                        <TableCell className="text-white">{member.projects}</TableCell>
-                        <TableCell className="text-white font-semibold">{member.totalCredits}</TableCell>
-                        <TableCell>
-                          <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0">
-                            #{member.rank}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Button size="sm" variant="ghost" className="text-purple-300 hover:bg-purple-900/30">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button size="sm" variant="ghost" className="text-purple-300 hover:bg-purple-900/30">
-                              <Edit className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Transactions Tab */}
-          <TabsContent value="transactions" className="space-y-4">
-            <Card className="bg-slate-900/50 border-purple-800/30 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white">Credit Transactions</CardTitle>
-                <CardDescription className="text-purple-300">
-                  Complete history of credit allocations and distributions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-purple-800/30 hover:bg-transparent">
-                      <TableHead className="text-purple-300">Type</TableHead>
-                      <TableHead className="text-purple-300">Project/Member</TableHead>
-                      <TableHead className="text-purple-300">Amount</TableHead>
-                      <TableHead className="text-purple-300">From</TableHead>
-                      <TableHead className="text-purple-300">To</TableHead>
-                      <TableHead className="text-purple-300">Date</TableHead>
-                      <TableHead className="text-purple-300">Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {creditTransactions.map((transaction) => (
-                      <TableRow key={transaction.id} className="border-purple-800/30 hover:bg-purple-900/20">
-                        <TableCell>
-                          <Badge
-                            className={
-                              transaction.type === "allocation"
-                                ? "bg-blue-900/50 text-blue-300 border-blue-500/30"
-                                : transaction.type === "distribution"
-                                  ? "bg-purple-900/50 text-purple-300 border-purple-500/30"
-                                  : "bg-green-900/50 text-green-300 border-green-500/30"
-                            }
-                          >
-                            {transaction.type}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-white">{transaction.project || transaction.member}</TableCell>
-                        <TableCell className="text-white font-semibold">
-                          <span className="flex items-center gap-1">
-                            <Zap className="w-4 h-4 text-yellow-400" />
-                            {transaction.amount}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-purple-200">{transaction.from}</TableCell>
-                        <TableCell className="text-purple-200">{transaction.to}</TableCell>
-                        <TableCell className="text-purple-200">{transaction.date}</TableCell>
-                        <TableCell>
-                          <Badge className="bg-green-900/50 text-green-300 border-green-500/30">
-                            {transaction.status}
-                          </Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

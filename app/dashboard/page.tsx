@@ -6,7 +6,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Zap, Trophy, Target, TrendingUp, Award, Star, Calendar, ArrowRight, Crown, Flame, Gift } from "lucide-react"
 import Link from "next/link"
-import { UserNav } from "@/components/user-nav"
 
 // Mock data
 const memberData = {
@@ -107,7 +106,6 @@ export default function DashboardPage() {
                 Admin
               </Button>
             </Link>
-            <UserNav />
           </nav>
         </div>
       </header>
